@@ -49,6 +49,23 @@ Verify that the index view works:
     again if it was closed after running it for the first time
     open http://localhost:8000/<app>/ (e.g., http://localhost:8000/music/) 
     (you should see "Hello, World!" printed in the browser)
+Create the corresponding <app>/urls.py file:
+    import views.py:
+        from . import views
+    create/update the urlpatterns list and 
+    move the corresponding URL pattern from <project_site>/urls.py to <app>/urls.py:
+        urlpatterns = (+=) [
+	        path('', views.index, name='index')
+        ]
+Include <app>/urls.py in the urlpatterns list of the <project_site>/urls.py:
+    path('<app>/', include('<app>.urls'))
+Verify again that the index view works.
+Redirect (optionally) the root URL of your site (i.e. 127.0.0.1:8000) to 127.0.0.1:8000/<app>/, 
+    i.e. make '<app>/' the landing page:
+        in <project_site>/urls.py extend the urlpatterns list like this:
+            urlpatterns += [
+	            path('', RedirectView.as_view(url='music/'))
+            ]
 Create also (optionally) a class-based index view in <app>/views.py: 
     from django.views import View	
     # alternatively: from django.views.generic import TemplateView
@@ -61,26 +78,23 @@ Modify/Update the corresponding path statement in the urlpatterns list in <urls>
 	    path('', views.IndexView.as_view(), name='index')
     ]
 Verify again that the index view works.
-Create the corresponding <app>/urls.py file:
-    import views.py:
-        from . import views
-    create/update the urlpatterns list and 
-    move the corresponding URL pattern from <project_site>/urls.py to <app>/urls.py:
-        urlpatterns = (+=) [
-	        path('', views.index, name='index')
-        ]
-Include <app>/urls.py in the urlpatterns list of the <project_site>/urls.py:
-    path('<app>/', include('<app>.urls'))
-Verify again that the index view works
-Redirect (optionally) the root URL of your site (i.e. 127.0.0.1:8000) to 127.0.0.1:8000/<app>/, 
-    i.e. make '<app>/' the landing page:
-        in <project_site>/urls.py extend the urlpatterns list like this:
-            urlpatterns += [
-	            path('', RedirectView.as_view(url='music/'))
-            ]
+Create also (optionally) a modified/improved version of the class-based index view in <app>/views.py, 
+    suitable for testing with index0.html, see below:
+    from django.views import View	
+    # alternatively: from django.views.generic import TemplateView
+    class IndexView(View):
+    # alternatively: class IndexView(TemplateView):
+		# a better option for testing with index0.html, see below:
+	    def get(self, request, *args, **kwargs):	# override (Template)View.get()
+	        context = {
+	            'john': 'John Lennon'
+	        }
+		    return render(request, 'index0.html', context=context)
+Create also (optionally) the simplest index0.html in templates.
+Verify again that the index view works.
 Create (optionally) the static, static/css, static/images and other directories in the <app> directory 
     to store static files that the <app> might need
-Include (optionally) the call to the static() function in <project_site>/urls.py, 
+Include (really optionally, since it is unnecessary) the call to the static() function in <project_site>/urls.py, 
     in order to enable the serving of static files (CSS, JavaScript, images) during development:
         in <project_site>/urls.py extend the urlpatterns list like this:
             from django.conf import settings
@@ -172,7 +186,7 @@ for the first model(s) and view(s) created in the previous steps
     accumulate over time and use your own collection of typical, generic templates ("template templates")
 Play with the admin site by adding more models and more data items
 Customize (optionally) the admin site by including the stuff discussed in 
-    https://docs.djangoproject.com/en/2.0/intro/tutorial07/#customize-the-admin-form
+    https://docs.djangoproject.com/en/dev/intro/tutorial07/#customize-the-admin-form
 Commit 2
 """
 

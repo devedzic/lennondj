@@ -19,7 +19,14 @@ def index(request):
 
 # class IndexView(TemplateView):
 class IndexView(View):
+
+    template_name = 'index0.html'       # unnecessary, probably because of render() in get() specifies it as well
+
     def get(self, request, *args, **kwargs):
-        return HttpResponse('<h1>John Lennon</h1>')
+        # return HttpResponse('<h1>John Lennon</h1>')
+        context = {
+            'john': 'John Lennon'
+        }
+        return render(request, 'index0.html', context=context)
 
 
