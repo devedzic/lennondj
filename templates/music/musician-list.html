@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block quote %}
+    {{ life_quote }}
+{% endblock %}
+{% block name %}
+    {{ john }}
+{% endblock %}
+
+{% block content %}
+    {% if musician_list %}
+        <p>The musicians registered in the database so far ({{ musician_list.count }}):</p>
+        {% for musician in musician_list %}
+{#            <li>{{ musician }}</li>#}
+            <li><a href="{% url 'musician-detail' musician.pk %}">{{ musician.name }}</a></li>
+{#            <li><a href="{% url 'musician-detail' musician.pk %}"></a>{{ musician.name }}</li>#}
+        {% endfor %}
+    {% else %}
+        <p>No musician is registered in the database.</p>
+    {% endif %}
+
+    <br>
+    <p>
+        <a href="{% url 'musician-create' %}">Add musician</a>
+    </p>
+{% endblock %}
+
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>Title</title>#}
+{#</head>#}
+{#<body>#}
+{##}
+{#</body>#}
+{#</html>#}

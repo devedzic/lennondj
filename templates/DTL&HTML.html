@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DTL & HTML</title>
+</head>
+<body>
+<!--
+DTL
+---
+
+    Extending base template
+    -----------------------
+    {% extends '<base>.html' %}
+
+    Handling static files
+    ---------------------
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <img src="{% static 'images/<<image file name>.<extension>>' %}" alt="">
+        example: <img src="{% static 'images/woodstock-iconic.jpg' %}" alt="">
+
+    Blocks
+    ------
+    Putting everything inside a block into a <div> enables more control over whitespace etc. For example:
+    {% block <block_name> %}
+        <div class="container-fluid">   {# just <div> is OK as well, the difference is just in some minor indentation #}
+            <br>
+            <p>...</p>
+            <ul>
+                <li><strong>XXX: </strong>{{ <var_name (from the corresponding view context)> }}</li>
+                ...
+            </ul>
+        </div>
+    {% endblock %}
+
+    Variables
+    ---------
+    {{ var_name }}
+        in list view: <the name of the corresponding class, all lowercase>_list, e.g. {{ performer_list }}
+                      {{ object_list }} is a good, universal alternative; works as an alias for each model class
+        in detail view: <the name of the corresponding class, all lowercase>, e.g. {{ performer }}
+    {{ var_name.field_name }} for accessing a specific object field in a template
+    {{ v1.v2_set }} for accessing the list of v2 objects in v1, in case V1 is the ForeignKey for V2
+    {{ v1.v2_set.all }} the list of all v2 objects in v1, in case V1 is the ForeignKey for V2
+
+    URLs / Links
+    ------------
+    {% url '<name of the corresponding view>' <object>.pk %}
+        example: {% url 'performer-detail' performer.pk %}
+        typical use case: <a href="{% url 'performer-detail' performer.pk %}">{{ performer.name }}</a>
+
+    Forms
+    -----
+    To render <label>/<input> pairs from the context data as table cells wrapped in <tr> tags:
+    <form action="" method="post">
+        {% csrf_token %}                used to prevent cross-site request forgery (CSRF);
+                                        see https://portswigger.net/web-security/csrf/tokens
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Submit">
+    </form>
+
+    To display confirm-delete dialog:
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Yes, delete">
+        &nbsp; &nbsp;                                                           optionally, next to the "Confirm" button
+        <a href="{% url 'performer-detail' performer.pk %}">No, keep it</a>     add also the "Cancel" link
+    </form>
+
+HTML
+----
+
+    HTML forms
+    ----------
+    Example: entering a team name in a text widget (text field) and pressing the 'OK' button to confirm the action
+    <form action="/team_name_url/" method="post">       action: where data goes when 'OK' is pressed ("": the same page)
+        <label for="team_name">Enter name: </label>     label: pertains to the text field (see the following <input>)
+        <input id="team_name"                           id: the id of the text field/widget in the HTML code
+            type="text"                                 type: the sort of widget to be displayed
+            name="name_field"                           name: the name of the text field/widget in the HTML code
+            value="Default name for team.">             value: the initial value for the field (when first displayed)
+        <input type="submit" value="OK">                another widget (a button; for a button, type="submit")
+    </form>
+-->
+</body>
+</html>

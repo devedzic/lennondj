@@ -1,0 +1,39 @@
+{%  extends 'base.html' %}
+
+{% block quote %}
+    {% if musician.quote %}
+        {{ musician.quote }}
+    {% else %}
+        {{ life_quote }}
+    {% endif %}
+{% endblock %}
+{% block name %}
+    {% if musician.quote %}
+        {{ musician.name }}
+    {% else %}
+        {{ john }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <p>Delete musician: {{ musician.name }}?</p>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Yes, delete">
+        &nbsp; &nbsp;
+        <a href="{% url 'musician-detail' musician.pk %}">No, keep it</a>
+    </form>
+{% endblock %}
+
+
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>Title</title>#}
+{#</head>#}
+{#<body>#}
+{##}
+{#</body>#}
+{#</html>#}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block name %}
+    {{ john }}
+{% endblock %}
+{% block quote %}
+    {{ life_quote }}
+{% endblock %}
+
+{% block content %}
+    {% if band_list %}
+        <p>The bands registered in the database so far ({{ band_list.count }}):</p>
+        {% for band in band_list %}
+{#            <li>{{ band }}</li>#}
+            <li><a href="{% url 'band-detail' band.pk %}">{{ band.name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <p>No band is registered in the database.</p>
+    {% endif %}
+
+    <br>
+    <p>
+        <a href="{% url 'band-create' %}">Add band</a>
+    </p>
+{% endblock %}

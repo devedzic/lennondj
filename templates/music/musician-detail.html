@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block quote %}
+    {% if musician.quote %}
+        {{ musician.quote }}
+    {% else %}
+        {{ life_quote }}
+    {% endif %}
+{% endblock %}
+{% block name %}
+    {% if musician.quote %}
+        {{ musician.name }}
+    {% else %}
+        {{ john }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <p>
+        {{ musician }}
+    </p>
+
+    <p>
+        <a href="{% url 'musician-update' musician.pk %}">Update musician</a> <br>
+        <a href="{% url 'musician-delete' musician.pk %}">Delete musician</a>
+    </p>
+{% endblock %}
+
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>Title</title>#}
+{#</head>#}
+{#<body>#}
+{##}
+{#</body>#}
+{#</html>#}

@@ -49,6 +49,19 @@ Verify that the index view works:
     again if it was closed after running it for the first time
     open http://localhost:8000/<app>/ (e.g., http://localhost:8000/music/) 
     (you should see "Hello, World!" printed in the browser)
+Alternatively, in <app>/views.py, 
+write the simplest view that renders the response to the simplest template (index0.html):
+    from django.shortcuts import render
+    def index(request):
+        context = {
+            'john': 'John Lennon'
+        }
+        return render(request, 'index0.html', context=context)
+Add index0.html to <project_site>/templates and verify that index view works:
+    <body>
+        <p>This is index0.html</p>
+        <h1>{{ john }}</h1>
+    </body>
 Create the corresponding <app>/urls.py file:
     import views.py:
         from . import views
@@ -67,12 +80,21 @@ Redirect (optionally) the root URL of your site (i.e. 127.0.0.1:8000) to 127.0.0
 	            path('', RedirectView.as_view(url='music/'))
             ]
 Create also (optionally) a class-based index view in <app>/views.py: 
-    from django.views import View	
-    # alternatively: from django.views.generic import TemplateView
-    class IndexView(View):
-    # alternatively: class IndexView(TemplateView):
+    from django.views.generic import TemplateView
+    # alternatively: from django.views import View	# better use TemplateView
+    class IndexView(TemplateView):
+    # alternatively: class IndexView(View):         # better use TemplateView
 	    def get(self, request, *args, **kwargs):	# override (Template)View.get()
 		    return HttpResponse('<h1>Hello, world</h1>')
+    # the best option (see https://docs.djangoproject.com/en/3.1/ref/class-based-views/base/#templateview):
+    from django.views.generic import TemplateView
+    class IndexView(TemplateView):
+        template_name = 'index.html'
+        def get_context_data(self, **kwargs):		# override get_context_data()
+            context = 
+                super().get_context_data(**kwargs)
+            context.update(...)				        # possibly add more context
+            return context
 Modify/Update the corresponding path statement in the urlpatterns list in <urls>.py :
     urlpatterns += [
 	    path('', views.IndexView.as_view(), name='index')
@@ -107,6 +129,16 @@ Commit 1
 # Development 2
 
 """
+Introduce Bootstrap templates (https://www.w3schools.com/bootstrap4/default.asp)
+Put the first pre-prepared version of the base template (base0.html) in <project_site>/templates
+Put the pre-prepared bootstrap.min.css in <app>/static/css
+Modify base0.html to enable working with the index view and beyond, and save it as base.html as well
+Create new version of index.html by extending base.html
+    introduce the {% block <blockname> %} {% endblock %} in base.html
+    override that block in index.html
+    render something from the index view in this block
+Verify that index.html works with the index view 
+
 Create the first (simple) model(s) in the <app>/models.py file
     typical fields:
         models.CharField(max_length=<n>)
@@ -141,12 +173,13 @@ Try some of the frequently used operations on the database:
         copy console.py from https://docs.google.com/document/d/13sU3UgaorntPFxIcOwQsjnZCe9Jp5EVyIebWJDlB7uk/edit
         to the project at the topmost level (where manage.py is);
         after it is run, it enables experimenting with the database of a Django app manually, from the console, 
-        by instantiating models and running commands like:
+        by instantiating models and running commands listed below from the Python Console;
+        alternatively, just import some <Models> from <app>.models
             - <Model>.objects.all() - display all the items of a certain type
-            - m = <Model>(<p1>, <p2>,...) - create a new object/item m by instantiating a model class <Model>
-                                            (<p1>, <p2>,... - the model field values passed to the <Model> constructor);
-                                            for using classmethod instead of __init__() for creating objects, see:
-                                            https://docs.djangoproject.com/en/dev/ref/models/instances/#creating-objects
+            - item = <Model>(<class_var1 from Model>=<value1>, <class_var2 from Model>=<value2>, ...) 
+                        - create a new object/item m by instantiating a model class <Model>
+              optionally, see https://docs.djangoproject.com/en/dev/ref/models/instances/#creating-objects 
+              for using classmethod instead of __init__() for creating objects
             - save it in the database by calling <object>.save() explicitly
               (you can actually instantiate a model class with an empty constructor (no parameters)
               and then populate its fields with <object>.<field> = <new value>;
@@ -171,7 +204,7 @@ Include the corresponding URL patterns (one path() function per pattern, best us
 in the <app>/urls.py, for the first model(s) created in the previous steps
     note that there can be more than one URL pattern related to a single model 
     (e.g., path('songs/', views.SongListView.as_view(), name='songs'), 
-           path('song/<int:pk>', views.SongDetailView.as_view(), name='song-detail'), etc.)
+           path('songs/<int:pk>/', views.SongDetailView.as_view(), name='song-detail'), etc.)
 Develop the corresponding view(s) in the <app>/views.py for the first model(s) created in the previous steps
     the first versions of these views can be rather "low-level", returning HttpResponse(...) or render(...); 
     however, consider using generic display views (such as ListView, DetailView) and 
