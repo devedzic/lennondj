@@ -1,0 +1,59 @@
+Models:
+	__str__()
+	get_absolute_url(): return reverse('<model>-detail', args=[str(self.id)]
+Views:
+	index(request):
+		context = {'k1': v1, 'k2': v2, ...} # or context = <out-of-index()-defined context dict>
+		return render(request, 'index.html', context=context)
+	IndexView(TemplateView):
+		template_name = 'index.html'
+		def get(request, objects=, *args, **kwargs):
+			# same as in index() above
+	<Model>ListView(ListView):
+		model = <Model>
+		template_name = '<app name>/<model>-list.html'
+		def get_query_set(): return <Model>.objects.all() # possibly filtered
+		def get_context_data(self, *, object_list=None, **kwargs): # return extra context
+			context = super().get_context_data(**kwargs)
+			context.update(<out-of-index()-defined context dict>)
+			return context
+	<Model>DetailView(DetailView):
+		model = <Model>
+		template_name = '<app name>/<model>-detail.html'
+		# only if external context needed
+		def get_context_data(self, *, object_list=None, **kwargs): # return extra context; same code as above
+	<Model>CreateView(CreateView):
+		model = <Model>
+		template_name = '<app name>/<model>-form.html'
+		fields = '__all__' # or list of selected fields from <Model>, like ['fieldname1', 'fieldname2',...]
+		# only if external context needed
+		def get_context_data(self, *, object_list=None, **kwargs): # return extra context; same code as above
+	<Model>UpdateView(UpdateView):
+		model = <Model>
+		template_name = '<app name>/<model>-form.html'
+		fields = '__all__' # or list of selected fields from <Model>, like ['fieldname1', 'fieldname2',...]
+		# only if external context needed
+		def get_context_data(self, *, object_list=None, **kwargs): # return extra context; same code as above
+	<Model>DeleteView(DeleteView):
+		model = <Model>
+		template_name = '<app name>/<model>-confirm-delete.html'
+		success_url = reverse_lazy('<model>-list')
+		# only if external context needed
+		def get_context_data(self, *, object_list=None, **kwargs): # return extra context; same code as above
+<app>/urls.py:
+	urlpatterns += [
+		# path('', views.index, name='index')
+		path('', views.IndexView.as_view(), name='index')
+		path('<model>s/', views.<Model>ListView.as_view(), name='<model>-list')
+		path('<model>s/<int:pk>/', views.<Model>DetailView.as_view(), name='<model>-detail')
+		path('<model>s/create/', views.<Model>CreateView.as_view(), name='<model>-create')
+		path('<model>s/update/<int:pk>/', views.<Model>UpdateView.as_view(), name='<model>-update')
+		path('<model>s/update/<int:pk>/', views.<Model>DeleteView.as_view(), name='<model>-delete')
+	]
+<project>/urls.py:
+	urlpatterns += [
+		# path('', views.index, name='index')			# after initial run, move to <app>/urls.py
+		# path('', views.IndexView.as_view(), name='index')	# after initial run, move to <app>/urls.py
+		path('<app name>/', include('<app>.urls'))
+		path('', RedirectView.as_view(url='<app name>/'))
+	]

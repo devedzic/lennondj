@@ -11,7 +11,7 @@
 {#    <div>#}
         <p>{{ band }}</p>
 
-        {% if band.musician_set %}
+        {% if band.musician_set.all %}
             {% for musician in band.musician_set.all %}
                 <li><a href="{% url 'musician-detail' musician.pk %}">{{ musician.name }}</a></li>
             {% endfor %}
